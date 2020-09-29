@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.cdu.questionnaire.dao.AuthDao">
+
+    <select id="login" resultType="com.cdu.questionnaire.pojo.User">
+           SELECT u.userName AS userName , r.role AS role , u.isRegister AS isRegister , u.registerTime AS registerTime
+                                       FROM user u INNER JOIN userrole ur ON u.id=ur.id INNER JOIN role r ON ur.id=r.id
+                                       WHERE userName=#{userName , jdbcType=VARCHAR}
+    </select>
+
+    <delete id="deleteUnValidUser">
+           DELETE FROM `user` WHERE userName=#{userName , jdbcType=VARCHAR} AND isRegister=#{isRegister , jdbcType=INTEGER};
+    </delete>
+
+    <select id="isRegisterFail" resultType="java.lang.Integer">
+           SELECT COUNT(*) FROM `user` WHERE userName=#{userName , jdbcType=VARCHAR} AND isRegister=2;
+    </select>
+
+    <select id="isExits" resultType="java.lang.Integer">
+           SELECT COUNT(*) FROM `user` WHERE userName=#{userName , jdbcType=VARCHAR};
+    </select>
+
+    <select id="statusOfRegister" resultType="java.lang.Integer">
+           SELECT isRegister FROM `user` WHERE userName=#{userName , jdbcType=VARCHAR};
+    </select>
+</mapper>
