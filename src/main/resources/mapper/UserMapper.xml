@@ -1,27 +1,32 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 
-<mapper namespace="com.cdu.questionnaire.dao.AuthDao">
+<mapper namespace="com.cdu.questionnaire.dao.UserDao">
+      <select id="findQuestionNaires" resultType="com.cdu.questionnaire.pojo.Question">
+               SELECT q.id AS id , q.quesName AS quesName , q.quesInfo AS quesInfo , q.createTime AS createTime , q.endTime AS endTime
+                         FROM `user` u INNER JOIN userques uq ON u.id=uq.userId
+                         INNER JOIN question q ON uq.quesId=q.id
+                         WHERE u.userName=#{userName , jdbcType=VARCHAR} AND uq.isSub=#{isSub , jdbcType=INTEGER};
+       </select>
 
-    <select id="login" resultType="com.cdu.questionnaire.pojo.User">
-           SELECT u.userName AS userName , r.role AS role , u.isRegister AS isRegister , u.registerTime AS registerTime
-                                       FROM user u INNER JOIN userrole ur ON u.id=ur.id INNER JOIN role r ON ur.id=r.id
-                                       WHERE userName=#{userName , jdbcType=VARCHAR}
-    </select>
+       <select id="getQuestionNaireFields" resultType="com.cdu.questionnaire.pojo.Field">
+               SELECT * FROM field WHERE quesId=#{quesId , jdbcType=INTEGER};
+       </select>
 
-    <delete id="deleteUnValidUser">
-           DELETE FROM `user` WHERE userName=#{userName , jdbcType=VARCHAR} AND isRegister=#{isRegister , jdbcType=INTEGER};
-    </delete>
+       <select id="getQuestionNaire" resultType="com.cdu.questionnaire.pojo.Question">
+               SELECT * FROM question WHERE id=#{quesId , jdbcType=INTEGER};
+       </select>
 
-    <select id="isRegisterFail" resultType="java.lang.Integer">
-           SELECT COUNT(*) FROM `user` WHERE userName=#{userName , jdbcType=VARCHAR} AND isRegister=2;
-    </select>
+       <select id="getFieldValues" resultType="com.cdu.questionnaire.pojo.FieldValue">
+               SELECT * FROM fieldvalue WHERE fieldId IN(SELECT id FROM field WHERE quesId=#{quesId , jdbcType=INTEGER})
+               AND userId=(
+                    SELECT userId FROM userques WHERE isSub=1 AND userId=(SELECT id FROM user WHERE userName=#{userName , jdbcType=VARCHAR})
+                   );
+       </select>
 
-    <select id="isExits" resultType="java.lang.Integer">
-           SELECT COUNT(*) FROM `user` WHERE userName=#{userName , jdbcType=VARCHAR};
-    </select>
-
-    <select id="statusOfRegister" resultType="java.lang.Integer">
-           SELECT isRegister FROM `user` WHERE userName=#{userName , jdbcType=VARCHAR};
-    </select>
+        <select id="getSubmitTime" resultType="java.lang.String">
+               SELECT subTime FROM record
+                              WHERE userId=(SELECT id FROM user WHERE userName=#{userName , jdbcType=VARCHAR})
+                              AND quesId=#{quesId , jdbcType=INTEGER};
+        </select>
 </mapper>

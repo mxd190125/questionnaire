@@ -1,14 +1,5 @@
-package com;
+package com.cdu.questionnaire.utils;
 
-/**
- * @ClassName Const
- * @Version 1.0
- * @Author dell
- * @Date 2020/4/6 23:54
- * @Description TODO
- * Modification User:
- * Modification Date:
- */
 
 public class Const {
 
