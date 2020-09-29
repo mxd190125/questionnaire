@@ -24,7 +24,7 @@ public interface SubQuesService {
      * @param quesId 问卷Id
      * @return 状态码
      */
-    Integer recordSub(String userId,String quesId);
+    Integer recordSub(String userId, String quesId);
 
     /**
      * 记录用户提交状态
@@ -32,12 +32,12 @@ public interface SubQuesService {
      * @param quesId 问卷Id
      * @return 状态码
      */
-    Integer checkIsSub(String userId,String quesId);
+    Integer checkIsSub(String userId, String quesId);
 
     /**
      * 传入用户填写问卷内容
      * @param mapList 内容的数据封装
      * @return 状态码
      */
-    Integer writeConQues(@Param("list") List<Map<String,Object>> mapList);
+    Integer writeConQues(@Param("list") List<Map<String, Object>> mapList);
 }
