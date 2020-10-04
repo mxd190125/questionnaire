@@ -20,7 +20,9 @@
        <select id="getFieldValues" resultType="com.cdu.questionnaire.pojo.FieldValue">
                SELECT * FROM fieldvalue WHERE fieldId IN(SELECT id FROM field WHERE quesId=#{quesId , jdbcType=INTEGER})
                AND userId=(
-                    SELECT userId FROM userques WHERE isSub=1 AND userId=(SELECT id FROM user WHERE userName=#{userName , jdbcType=VARCHAR})
+                    SELECT userId FROM userques WHERE isSub=1
+                                                AND userId=(SELECT id FROM user WHERE userName=#{userName , jdbcType=VARCHAR})
+                                                AND quesId=#{quesId , jdbcType=INTEGER}
                    );
        </select>
 
