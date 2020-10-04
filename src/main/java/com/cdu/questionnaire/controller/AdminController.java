@@ -65,7 +65,7 @@ public class AdminController {
     public String agreeAuditUser(String userName){
         //查询待审核用户是否存在
         int status = adminService.queryAuditUser(userName);
-        if (status >=0){
+        if (status !=0){
             //通过审核
             Integer auditStatus = adminService.agreeAuditUser(userName);
             //查询未填写的问卷
