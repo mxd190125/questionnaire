@@ -2,6 +2,7 @@ package com.cdu.questionnaire.controller;
 
 
 import com.cdu.questionnaire.service.SubQuesService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -31,6 +32,8 @@ public class SubQuesController {
     @Resource
     private SubQuesService subQuesService;
 
+
+
     @PostMapping(value = "/user/home/subQues",produces = "application/json;charset=UTF-8")
     public String subQues(@RequestBody Map<String,Object> params) throws JSONException {
         if (params == null){
@@ -44,27 +47,26 @@ public class SubQuesController {
         String userName = params.get("userName").toString();
         String userId = subQuesService.queryId(userName);
 
-        //问卷内容
         List<Map<String,Object>> mapList = new ArrayList<>();
-        JSONObject jsonObject = new JSONObject(params);
-        JSONArray jsonArray = jsonObject.getJSONArray("content");
-        for (int j = 0; j < jsonArray.length(); j++) {
-            JSONObject object = jsonArray.getJSONObject(j);
-            Map<String,Object> map = new HashMap<>(0);
-            map.put("id",object.getString("id"));
-            map.put("value",object.getString("value"));
+        Object content = params.get("content");
+        String s = String.valueOf(content);
+        JSONArray jsonArray = new JSONArray(s);
+        for (int i=0;i<jsonArray.length();i++){
+            Map<String,Object> map = new HashMap<>();
+            JSONObject jsonObject = jsonArray.getJSONObject(i);
+            map.put("id",jsonObject.get("id"));
+            map.put("value",jsonObject.get("value"));
             map.put("userId",userId);
             mapList.add(map);
         }
         if (quesId !=null && userId != null){
             // 记录提交时间
-            //提交时间状态
-            Integer recordSub = subQuesService.recordSub(userId, quesId);
+
             //提交问卷状态
             Integer checkIsSub = subQuesService.checkIsSub(userId, quesId);
             //写入内容
             Integer writeConQues = subQuesService.writeConQues(mapList);
-            if (recordSub == 0 || checkIsSub == 0 || writeConQues == 0){
+            if (checkIsSub == 0 || writeConQues == 0){
                 return "{\"status\" : \"0\"}";
             }else {
                 return "{\"status\" : \"1\"}";
