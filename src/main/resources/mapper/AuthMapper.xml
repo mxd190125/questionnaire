@@ -5,7 +5,7 @@
 
     <select id="login" resultType="com.cdu.questionnaire.pojo.User">
            SELECT u.userName AS userName , r.role AS role , u.isRegister AS isRegister , u.registerTime AS registerTime
-                                       FROM user u INNER JOIN userrole ur ON u.id=ur.id INNER JOIN role r ON ur.id=r.id
+                                       FROM user u INNER JOIN userrole ur ON u.id=ur.userId INNER JOIN role r ON ur.roleId=r.id
                                        WHERE userName=#{userName , jdbcType=VARCHAR}
     </select>
 
@@ -24,4 +24,12 @@
     <select id="statusOfRegister" resultType="java.lang.Integer">
            SELECT isRegister FROM `user` WHERE userName=#{userName , jdbcType=VARCHAR};
     </select>
+
+    <insert id="registerUserName" statementType="CALLABLE" parameterType="java.lang.String">
+       {
+        CALL userRegister(
+             #{_userName , jdbcType=VARCHAR}
+        )
+       }
+    </insert>
 </mapper>

@@ -7,7 +7,7 @@
     </select>
 
     <select id="queryAllUser" resultType="java.lang.String">
-        select userName from `user` where isRegister = '1' limit #{pageNumber},5;
+        select userName from `user` where isRegister = '1' ;
     </select>
 
     <select id="queryQuesByUser" resultType="java.lang.String">

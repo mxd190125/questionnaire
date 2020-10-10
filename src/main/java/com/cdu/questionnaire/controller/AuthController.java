@@ -46,11 +46,21 @@ public class AuthController {
         String result="";
 
         if (userName!=null && userName.length()>0){
-            User user=authService.login(userName);
-            log.info("################"+mapper.writeValueAsString(user));
-            if (user!=null){
-                //正在注册
-                if (user.getIsRegister()==0){
+            int isExits=authService.isExits(userName);
+
+            if (isExits!=0){
+                User user=authService.login(userName);
+                log.info("################"+mapper.writeValueAsString(user));
+
+                if (authService.isRegisterFail(userName)==1){
+                    //注册失败
+                    result="{\"status\":"+STATUS_UN_SUCCESS+
+                            ",\"reStatus\":\""+RE_FAIL+
+                            "\",\"role\":\"-1\"}";
+                    //删除注册失败的用户
+                    authService.deleteUnValidUser(userName , 2);
+                }else if (user==null){
+                    //正在注册
                     result="{\"status\":"+STATUS_UN_SUCCESS+
                             ",\"reStatus\":\""+RE_ING+
                             "\",\"role\":\"-1\"}";
@@ -61,22 +71,12 @@ public class AuthController {
                             "\",\"role\":\""+user.getRole()+"\"}";
                 }
             }else {
-                if (authService.isRegisterFail(userName)==1){
-                    //注册失败
-                    result="{\"status\":"+STATUS_UN_SUCCESS+
-                            ",\"reStatus\":\""+RE_FAIL+
-                            "\",\"role\":\"-1\"}";
-                    //删除注册失败的用户
-                    authService.deleteUnValidUser(userName , 2);
-                }else {
-                    //未注册
-                    result="{\"status\":"+STATUS_UN_SUCCESS+
-                            ",\"reStatus\":\""+RE_NULL+
-                            "\",\"role\":\"-1\"}";
-                }
+                //未注册
+                result="{\"status\":"+STATUS_UN_SUCCESS+
+                        ",\"reStatus\":\""+RE_NULL+
+                        "\",\"role\":\"-1\"}";
             }
         }
-
 
         return result;
     }
@@ -111,6 +111,7 @@ public class AuthController {
                     authService.deleteUnValidUser(userName , 2);
                 }
             }else {
+                authService.registerUserName(userName);
                 //用户未注册
                 result="{\"status\":"+STATUS_SUCCESS+
                         ",\"reStatus\":\""+RE_NULL+"\"}";

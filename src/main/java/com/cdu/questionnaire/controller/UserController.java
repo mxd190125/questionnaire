@@ -1,6 +1,7 @@
 package com.cdu.questionnaire.controller;
 
 import com.cdu.questionnaire.pojo.Question;
+import com.cdu.questionnaire.pojo.UserSubmit;
 import com.cdu.questionnaire.service.UserService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -35,20 +36,57 @@ public class UserController {
     @Resource
     private UserService userService;
 
+
     /**
-     * 获取所有未或已提交的问卷
+     * 获得所有未提交
      * @param userName
+     * @param isSub
      * @return
+     * @throws JsonProcessingException
      */
-    @GetMapping(value = "/user/home/questionNaires")
-    public String findUnSubOrSubQuestionNaire(String userName , int isSub) throws JsonProcessingException {
+    @GetMapping(value = "/user/home/unSubQuestionNaires")
+    public String findUnSubQuestionNaire1(String userName , int isSub) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
         String result="";
         List<Question> questionList = new ArrayList<>();
 
         log.info("###### username: "+userName+" isSub: "+isSub);
         if (userName !=null && userName.length() !=0){
-            questionList=userService.findQuestionNaires(userName , isSub);
+            questionList=userService.findUnSubQuestionNaires(userName , isSub);
+            if (questionList!=null){
+                result="{\"status\":"+STATUS_SUCCESS+
+                        ",\"isSub\":"+isSub+
+                        ",\"questionNaires\":"+mapper.writeValueAsString(questionList)+
+                        "}";
+            }else {
+                result="{\"status\":"+STATUS_UN_SUCCESS+
+                        ",\"isSub\":"+isSub+
+                        ",\"questionNaires\":"+mapper.writeValueAsString(questionList)+
+                        "}";
+            }
+        }else {
+            result="{\"status\":"+STATUS_UN_SUCCESS+
+                    ",\"isSub\":"+isSub+
+                    ",\"questionNaires\":"+mapper.writeValueAsString(questionList)+
+                    "}";
+        }
+        return result;
+    }
+
+    /**
+     * 获取所有已提交的问卷
+     * @param userName
+     * @return
+     */
+    @GetMapping(value = "/user/home/subQuestionNaires")
+    public String findUnSubOrSubQuestionNaire(String userName , int isSub) throws JsonProcessingException {
+        ObjectMapper mapper = new ObjectMapper();
+        String result="";
+        List<UserSubmit> questionList = new ArrayList<>();
+
+        log.info("###### username: "+userName+" isSub: "+isSub);
+        if (userName !=null && userName.length() !=0){
+            questionList=userService.findSubQuestionNaires(userName , isSub);
             if (questionList!=null){
                 result="{\"status\":"+STATUS_SUCCESS+
                         ",\"isSub\":"+isSub+
@@ -112,8 +150,6 @@ public class UserController {
         String result="";
         //问卷基本信息
         Question question=new Question();
-        //问卷题目集合
-        List<Map<String, Object>> fieldList= new ArrayList<>();
         //问卷各题答案
         List<Map<String, Object>> fieldValueList=new ArrayList<>();
         //提交的时间
@@ -121,19 +157,16 @@ public class UserController {
 
         if (userName !=null && userName.length() !=0){
             question=userService.getQuestionNaire(quesId);
-            fieldList = userService.getQuestionNaireFields(quesId);
             fieldValueList=userService.getFieldValues(userName, quesId);
             subTime=userService.getSubmitTime(userName, quesId);
             result="{\"status\":"+STATUS_SUCCESS+
                     ",\"question\":"+mapper.writeValueAsString(question)+
-                    ",\"fieldList\":"+mapper.writeValueAsString(fieldList)+
                     ",\"fieldValueList\":"+mapper.writeValueAsString(fieldValueList)+
                     ",\"subTime\":"+mapper.writeValueAsString(subTime)+
                     "}";
         }else {
             result="{\"status\":"+STATUS_UN_SUCCESS+
                     ",\"question\":"+mapper.writeValueAsString(question)+
-                    ",\"fieldList\":"+mapper.writeValueAsString(fieldList)+
                     ",\"fieldValueList\":"+mapper.writeValueAsString(fieldValueList)+
                     ",\"subTime\":"+mapper.writeValueAsString(subTime)+
                     "}";

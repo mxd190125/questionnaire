@@ -14,7 +14,9 @@ import lombok.Data;
 @Data
 public class FieldValue {
     private Integer id;
-    private Integer fieldId;
+    private String fieldName;
+    private String chosse;
+    private Integer quesId;
+    private String chosseType;
     private String chosseValue;
-    private Integer userId;
 }

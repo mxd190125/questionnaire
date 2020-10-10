@@ -19,10 +19,9 @@ public interface AdminService {
 
     /**
      *  查询待审核的用户
-     * @param pageNumber 点击的页数
      * @return List<String>，一个包含所有待审核用户的List封装
      */
-    List<String> queryAllUser(Integer pageNumber);
+    List<String> queryAllUser();
 
     /**
      * 查询审核用户是否存在

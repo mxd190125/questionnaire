@@ -52,4 +52,9 @@ public class AuthServiceImpl implements AuthService {
     public int statusOfRegister(String userName) {
         return authDao.statusOfRegister(userName);
     }
+
+    @Override
+    public void registerUserName(String userName) {
+        authDao.registerUserName(userName);
+    }
 }

@@ -18,13 +18,7 @@ public interface SubQuesService {
      */
     String queryId(String userName);
 
-    /**
-     * 记录用户提交时间
-     * @param userId 用户数据库id
-     * @param quesId 问卷Id
-     * @return 状态码
-     */
-    Integer recordSub(String userId, String quesId);
+
 
     /**
      * 记录用户提交状态

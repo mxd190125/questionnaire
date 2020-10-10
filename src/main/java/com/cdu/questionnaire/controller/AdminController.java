@@ -104,13 +104,12 @@ public class AdminController {
 
     /**
      * * 显示所有的用户
-     * @param pageNumber 下一页
      * @return 返回一个所有正式用户的List集合数据
      * @throws JsonProcessingException 抛出错误
      */
     @PostMapping(value = "/admin/home/showAllUser")
-    public String showAllUser(Integer pageNumber) throws JsonProcessingException {
-        List<String> userList = adminService.queryAllUser((pageNumber-1)*PAGE_SIZE);
+    public String showAllUser() throws JsonProcessingException {
+        List<String> userList = adminService.queryAllUser();
         String result = objectMapper.writeValueAsString(userList);
         if (userList != null){
             return  "{\"status\":\"1\""+ ",\"userList\":" + result + "}";

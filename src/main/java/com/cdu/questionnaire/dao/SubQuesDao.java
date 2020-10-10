@@ -16,13 +16,7 @@ public interface SubQuesDao {
      */
     String queryId(@Param("userName") String userName);
 
-    /**
-     * 记录用户提交时间
-     * @param userId 用户数据库id
-     * @param quesId 问卷Id
-     * @return 状态码
-     */
-    Integer recordSub(@Param("userId") String userId, @Param("quesId") String quesId);
+
 
     /**
      * 记录用户提交状态

@@ -4,6 +4,7 @@ import com.cdu.questionnaire.dao.UserDao;
 import com.cdu.questionnaire.pojo.Field;
 import com.cdu.questionnaire.pojo.FieldValue;
 import com.cdu.questionnaire.pojo.Question;
+import com.cdu.questionnaire.pojo.UserSubmit;
 import com.cdu.questionnaire.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -31,8 +32,13 @@ public class UserServiceImpl implements UserService {
     private UserDao userDao;
 
     @Override
-    public List<Question> findQuestionNaires(String userName , int isSub) {
-        return userDao.findQuestionNaires(userName , isSub);
+    public List<UserSubmit> findSubQuestionNaires(String userName , int isSub) {
+        return userDao.findSubQuestionNaires(userName , isSub);
+    }
+
+    @Override
+    public List<Question> findUnSubQuestionNaires(String userName, int isSub) {
+        return userDao.findUnSubQuestionNaires(userName, isSub);
     }
 
     @Override
@@ -80,15 +86,24 @@ public class UserServiceImpl implements UserService {
 
         List<Map<String, Object>> list = new ArrayList<>();
         for (FieldValue fieldValue : fieldValues) {
-            Map<String , Object> map=new HashMap();
-            map.put("id" , fieldValue.getId());
-            map.put("fieldId" , fieldValue.getFieldId());
-
+            Map<String, Object> map = new HashMap<>();
+            map.put("id", fieldValue.getId());
+            map.put("fieldName", fieldValue.getFieldName());
+            String chosse = fieldValue.getChosse();
+            if (chosse != null){
+                String[] chosseArray = chosse.split("#");
+                map.put("chosse", chosseArray);
+            }else {
+                map.put("chosse", chosse);
+            }
+            map.put("quesId", fieldValue.getQuesId());
+            String chosseType = fieldValue.getChosseType();
+            String[] chosseTypeArray = chosseType.split("#");
+            map.put("chosseType", chosseTypeArray);
             String chosseValue = fieldValue.getChosseValue();
             String[] chosseValueArray = chosseValue.split("#");
             map.put("chosseValue" , chosseValueArray);
 
-            map.put("userId" , fieldValue.getUserId());
             list.add(map);
         }
         return list;

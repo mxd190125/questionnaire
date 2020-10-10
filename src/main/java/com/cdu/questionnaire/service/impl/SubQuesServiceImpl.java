@@ -28,10 +28,7 @@ public class SubQuesServiceImpl implements SubQuesService {
         return subQuesDao.queryId(userName);
     }
 
-    @Override
-    public Integer recordSub(String userId, String quesId) {
-        return subQuesDao.recordSub(userId,quesId);
-    }
+
 
     @Override
     public Integer checkIsSub(String userId, String quesId) {

@@ -48,8 +48,8 @@ public class AdminServiceImpl implements AdminService {
 
 
     @Override
-    public List<String> queryAllUser(Integer pageNumber) {
-        return adminDao.queryAllUser(pageNumber);
+    public List<String> queryAllUser() {
+        return adminDao.queryAllUser();
     }
 
     @Override

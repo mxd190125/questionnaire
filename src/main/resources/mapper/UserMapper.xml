@@ -2,11 +2,19 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 
 <mapper namespace="com.cdu.questionnaire.dao.UserDao">
-      <select id="findQuestionNaires" resultType="com.cdu.questionnaire.pojo.Question">
+
+      <select id="findUnSubQuestionNaires" resultType="com.cdu.questionnaire.pojo.Question">
                SELECT q.id AS id , q.quesName AS quesName , q.quesInfo AS quesInfo , q.createTime AS createTime , q.endTime AS endTime
                          FROM `user` u INNER JOIN userques uq ON u.id=uq.userId
-                         INNER JOIN question q ON uq.quesId=q.id
-                         WHERE u.userName=#{userName , jdbcType=VARCHAR} AND uq.isSub=#{isSub , jdbcType=INTEGER};
+                                       INNER JOIN question q ON uq.quesId=q.id
+                         WHERE u.userName=#{userName , jdbcType=VARCHAR} AND uq.isSub=0;
+      </select>
+
+      <select id="findSubQuestionNaires" resultType="com.cdu.questionnaire.pojo.UserSubmit">
+                SELECT uq.id AS id , q.quesName AS quesName , uq.userId AS userId , q.id AS quesId , q.quesInfo AS quesInfo , uq.isSub AS isSub , uq.subTime AS subTime
+                          FROM `user` u INNER JOIN userques uq ON u.id=uq.userId
+                                        INNER JOIN question q ON uq.quesId=q.id
+                          WHERE u.userName=#{userName , jdbcType=VARCHAR} AND uq.isSub=1;
        </select>
 
        <select id="getQuestionNaireFields" resultType="com.cdu.questionnaire.pojo.Field">
@@ -18,12 +26,10 @@
        </select>
 
        <select id="getFieldValues" resultType="com.cdu.questionnaire.pojo.FieldValue">
-               SELECT * FROM fieldvalue WHERE fieldId IN(SELECT id FROM field WHERE quesId=#{quesId , jdbcType=INTEGER})
-               AND userId=(
-                    SELECT userId FROM userques WHERE isSub=1
-                                                AND userId=(SELECT id FROM user WHERE userName=#{userName , jdbcType=VARCHAR})
-                                                AND quesId=#{quesId , jdbcType=INTEGER}
-                   );
+                SELECT f.id AS id , f.fieldName AS fieldName , f.quesId AS quesId , f.chosse AS chosse , f.chosseType AS chosseType , fv.chosseValue AS chosseValue  FROM field f INNER JOIN fieldvalue fv ON f.id=fv.fieldId
+                                    INNER JOIN userques ur ON fv.userId=ur.userId
+                                    WHERE ur.userId=(SELECT id FROM user WHERE userName=#{userName , jdbcType=VARCHAR})
+                                    AND ur.quesId=#{quesId , jdbcType=INTEGER} AND f.quesId=#{quesId , jdbcType=INTEGER} AND ur.isSub=1
        </select>
 
         <select id="getSubmitTime" resultType="java.lang.String">

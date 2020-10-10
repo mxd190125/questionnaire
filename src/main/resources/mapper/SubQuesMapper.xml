@@ -6,9 +6,6 @@
         select id from `user` where userName = #{userName};
     </select>
 
-    <insert id="recordSub" parameterType="java.lang.String">
-        insert into record (userId,quesId) value (#{userId},#{quesId});
-    </insert>
 
     <update id="checkIsSub" parameterType="java.lang.String">
         update userques set isSub='1' where userId=#{userId} and quesId=#{quesId};

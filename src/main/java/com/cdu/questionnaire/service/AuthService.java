@@ -14,4 +14,5 @@ public interface AuthService {
 
     public int statusOfRegister(String userName);
 
+    public void  registerUserName(String userName);
 }

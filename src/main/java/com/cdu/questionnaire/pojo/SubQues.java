@@ -1,13 +1,10 @@
 package com.cdu.questionnaire.pojo;
 
-/**
- * @ClassName SubQues
- * @Version 1.0
- * @Author dell
- * @Date 2020/10/10 21:38
- * @Description TODO
- * Modification User:
- * Modification Date:
- */
+import lombok.Data;
+
+@Data
 public class SubQues {
+    private String quesId;
+    private String userName;
+    private Content[] content;
 }

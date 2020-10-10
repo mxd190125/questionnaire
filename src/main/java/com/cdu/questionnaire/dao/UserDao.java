@@ -3,6 +3,7 @@ package com.cdu.questionnaire.dao;
 import com.cdu.questionnaire.pojo.Field;
 import com.cdu.questionnaire.pojo.FieldValue;
 import com.cdu.questionnaire.pojo.Question;
+import com.cdu.questionnaire.pojo.UserSubmit;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -12,11 +13,13 @@ import java.util.List;
 public interface UserDao {
 
     /**
-     * 获得未提交问卷集合的信息
+     * 获得提交问卷集合的信息
      * @param userName
      * @return
      */
-    public List<Question> findQuestionNaires(@Param("userName") String userName , @Param("isSub") int isSub);
+    public List<UserSubmit> findSubQuestionNaires(@Param("userName") String userName , @Param("isSub") int isSub);
+
+    public List<Question> findUnSubQuestionNaires(@Param("userName") String userName , @Param("isSub") int isSub);
 
     /**
      * 获得指定问卷的内容

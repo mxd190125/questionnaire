@@ -40,4 +40,11 @@ public interface AuthDao {
      */
     public int statusOfRegister(@Param("userName") String userName);
 
+    /**
+     *
+     * @param userName
+     * @return
+     */
+    public void registerUserName(@Param("_userName") String userName);
+
 }

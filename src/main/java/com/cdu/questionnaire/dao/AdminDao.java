@@ -27,10 +27,9 @@ public interface AdminDao {
 
     /**
      *  查询待审核的用户
-     * @param pageNumber 页数
      * @return List<String>，一个包含所有待审核用户的List封装
      */
-    List<String> queryAllUser(@Param("pageNumber") Integer pageNumber);
+    List<String> queryAllUser();
 
     /**
      *  有效问卷
