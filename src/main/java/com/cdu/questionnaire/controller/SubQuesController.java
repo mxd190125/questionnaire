@@ -1,8 +1,6 @@
 package com.cdu.questionnaire.controller;
 
 
-import com.cdu.questionnaire.pojo.Content;
-import com.cdu.questionnaire.pojo.SubQues;
 import com.cdu.questionnaire.service.SubQuesService;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -33,128 +31,78 @@ public class SubQuesController {
     @Resource
     private SubQuesService subQuesService;
 
-
-
-//    @PostMapping(value = "/user/home/subQues",produces = "application/json;charset=UTF-8")
-//    public String subQues(@RequestBody Map<String,Object> params) throws JSONException {
-//        if (params == null){
-//            System.out.println("系统接收参数错误");
-//            return "{\"status\" : \"0\"}";
-//        }
-//
-//        // 问卷id
-//        String quesId = params.get("quesId").toString();
-//        // 用户id
-//        String userName = params.get("userName").toString();
-//        String userId = subQuesService.queryId(userName);
-//        List<Map<String,Object>> mapList = new ArrayList<>();
-//        Object[] contents = (Object[]) params.get("content");
-//        for (Object content : contents) {
-//            Map<String , Object> map=new HashMap<>();
-//            JSONObject jsonObject = new JSONObject(content.toString());
-//            map.put("id",jsonObject.get("id"));
-//            map.put("value",jsonObject.get("value"));
-//            map.put("userId",userId);
-//            mapList.add(map);
-//        }
-//
-////        List<Map<String,Object>> mapList = new ArrayList<>();
-//////        Object content = params.get("content");
-////        String content = params.get("content").toString();
-//////        String s = String.valueOf(content);
-////        JSONArray jsonArray = new JSONArray(content);
-////        for (int i=0;i<jsonArray.length();i++){
-////            Map<String,Object> map = new HashMap<>();
-////            JSONObject jsonObject = jsonArray.getJSONObject(i);
-////            map.put("id",jsonObject.get("id"));
-////            map.put("value",jsonObject.get("value"));
-////            map.put("userId",userId);
-////            mapList.add(map);
-////        }
-//
-//        if (quesId !=null && userId != null){
-//            // 记录提交时间
-//
-//            //提交问卷状态
-//            Integer checkIsSub = subQuesService.checkIsSub(userId, quesId);
-//            //写入内容
-//            Integer writeConQues = subQuesService.writeConQues(mapList);
-//            if (checkIsSub == 0 || writeConQues == 0){
-//                return "{\"status\" : \"0\"}";
-//            }else {
-//                return "{\"status\" : \"1\"}";
-//            }
-//        }else {
-//            return "{\"status\" : \"0\"}";
-//        }
-//    }
-
-
-
-    @PostMapping(value = "/user/home/subQues",produces = "application/json;charset=UTF-8")
-    public String subQues(@RequestBody SubQues params) {
-        if (params == null){
+    @PostMapping(value = "/user/home/subQues", produces = "application/json;charset=UTF-8")
+    public String subQues(@RequestBody String params) throws JSONException {
+        if (params == null) {
             System.out.println("系统接收参数错误");
             return "{\"status\" : \"0\"}";
         }
+        //保存问卷题目答案以及用户id的集合
+        List<Map<String, Object>> mapList = new ArrayList<>();
+        JSONObject jsonObject = new JSONObject(params);
 
-
-
-       // 问卷id
-       String quesId = params.getQuesId();
-        // 用户id
-        String userName = params.getUserName();
+        //问卷id
+        String quesId = jsonObject.getString("quesId");
+        //获取用户名，然后在数据库获取该用户的id
+        String userName = jsonObject.getString("userName");
         String userId = subQuesService.queryId(userName);
-        List<Map<String,Object>> mapList = new ArrayList<>();
-        Content[] content = params.getContent();
-        for (int i=0;i<content.length;i++){
-            Map<String,Object> map = new HashMap<>();
-            map.put("id",content[i].getId());
-            map.put("value",content[i].getValue());
-            map.put("userId",userId);
+        //解析json数组
+        String content = jsonObject.getString("content");
+        JSONObject jsonObject1 = new JSONObject(content);
+        JSONArray content1 = jsonObject1.getJSONArray("content");
+        for (int i = 0; i < content1.length(); i++) {
+            Map<String, Object> map = new HashMap<>();
+            JSONObject jsonObject2 = content1.getJSONObject(i);
+            Integer id = (Integer) jsonObject2.get("id");
+            String value = jsonObject2.getString("value");
+            map.put("id", id);
+            map.put("value", value);
+            map.put("userId", userId);
             mapList.add(map);
         }
-
-        if (quesId !=null && userId != null){
-            // 记录提交时间
-
+        if (quesId != null && userId != null) {
             //提交问卷状态
             Integer checkIsSub = subQuesService.checkIsSub(userId, quesId);
             //写入内容
             Integer writeConQues = subQuesService.writeConQues(mapList);
-            if (checkIsSub == 0 || writeConQues == 0){
+            if (checkIsSub == 0 || writeConQues == 0) {
                 return "{\"status\" : \"0\"}";
-            }else {
+            } else {
                 return "{\"status\" : \"1\"}";
             }
-        }else {
+        } else {
             return "{\"status\" : \"0\"}";
         }
-
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
