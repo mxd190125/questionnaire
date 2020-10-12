@@ -81,6 +81,7 @@ public class AuthController {
         return result;
     }
 
+
     /**
      * 用户注册
      * @param userName

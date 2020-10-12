@@ -19,7 +19,7 @@
     </select>
 
     <select id="queryQuesTime" resultType="java.util.Map">
-        select q.id as quesId,u.id as userId ,0 as isSub from question q ,`user` u where  (q.endTime-q.createTime)>0 and userName=#{userName} ;
+        select q.id as quesId,u.id as userId ,0 as isSub from question q ,`user` u where  (q.endTime-now())>0 and userName=#{userName} ;
     </select>
 
     <select id="queryAuditUser" resultType="int">
