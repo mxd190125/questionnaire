@@ -5,6 +5,7 @@ import lombok.Data;
 import java.util.Date;
 
 /**
+ * @Message 添加了doctorId
  * @ClassName 马雪冬
  * @Version 1.0
  * @Author dell
@@ -15,8 +16,10 @@ import java.util.Date;
  */
 @Data
 public class User {
+    private String id;
     private String userName;
     private String role;
     private Integer isRegister;
-    private Date registerTime;
+    private String registerTime;
+    private Integer doctorId;
 }

@@ -1,5 +1,6 @@
 package com.cdu.questionnaire.service;
 
+import com.cdu.questionnaire.pojo.User;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -64,7 +65,7 @@ public interface AdminService {
      * @param userName 用户id
      * @return List<String>，一个包含该用户的提交问卷的List封装
      */
-    List<String> queryQuesByUser(Integer pageNumber, String userName);
+    List<Map<String,String>> queryQuesByUser( String userName);
 
     /**
      *   拒绝用户注册
@@ -78,5 +79,9 @@ public interface AdminService {
      * @param quesId 问卷id
      * @return 一个包含问卷内容的list封装数据
      */
+
+    int writeUserDoctor(String userId, String doctorId);
+
+    List<User> queryDoctors();
 
 }

@@ -6,7 +6,6 @@
         select id from `user` where userName = #{userName};
     </select>
 
-
     <update id="checkIsSub" parameterType="java.lang.String">
         update userques set isSub='1' where userId=#{userId} and quesId=#{quesId};
     </update>
@@ -14,12 +13,11 @@
     <insert id="writeConQues" parameterType="java.util.List">
         insert into fieldvalue (fieldId,chosseValue,userId)
         values
+
         <foreach collection="list" item="item" separator=",">
             (#{item.id,jdbcType=INTEGER},#{item.value,jdbcType=VARCHAR},#{item.userId,jdbcType=INTEGER}
             )
         </foreach>
     </insert>
-
-
 
 </mapper>

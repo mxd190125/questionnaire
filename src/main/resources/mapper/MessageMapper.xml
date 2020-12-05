@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.cdu.questionnaire.dao.MessageDao">
+
+    <update id="clearNoReadMessage">
+            UPDATE chatlog SET isRead=1 WHERE isRead=0 AND senderId=#{senderId , jdbcType=INTEGER} AND subId=#{subId , jdbcType=INTEGER};
+    </update>
+
+    <select id="getMessages" resultType="com.cdu.questionnaire.pojo.Message">
+            SELECT id , userId , doctorId , subId , content , senderId , DATE_FORMAT(sendTime , '%Y-%m-%d %H:%i:%s') AS sendTime, isRead
+            FROM chatlog WHERE subId=#{subId , jdbcType=INTEGER} ORDER BY sendTime DESC;
+    </select>
+
+    <insert id="insertChatLog">
+        INSERT INTO `chatlog`(`userId`, `doctorId`, `subId`, `senderId`, `content`, `sendTime`)
+        VALUES (#{userId}, #{doctorId}, #{subId}, #{senderId}, #{content},now());
+    </insert>
+
+    <select id="getSubScore" resultType="java.lang.Integer">
+        SELECT subScore FROM userques WHERE id=#{subId , jdbcType=INTEGER};
+    </select>
+
+</mapper>

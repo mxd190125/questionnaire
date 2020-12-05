@@ -1,12 +1,10 @@
 package com.cdu.questionnaire.dao;
 
-import com.cdu.questionnaire.pojo.Field;
-import com.cdu.questionnaire.pojo.FieldValue;
-import com.cdu.questionnaire.pojo.Question;
-import com.cdu.questionnaire.pojo.UserSubmit;
+import com.cdu.questionnaire.pojo.*;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.HashMap;
 import java.util.List;
 
 @Mapper
@@ -51,4 +49,44 @@ public interface UserDao {
      * @return
      */
     public String getSubmitTime(@Param("userName") String userName , @Param("quesId") int quesId);
+
+    /**
+     *
+     * @param fieldId
+     * @return
+     */
+    public List<HashMap<String , Object>> getUnFields(@Param("fieldId") int fieldId);
+
+
+    /**
+     * 第二阶段开发的代码
+     */
+
+    public HashMap<String , Object> getUnSubAnswerInfo(@Param("userId") int userId);
+
+    public HashMap<String , Object> getUnSubPSAInfo(@Param("userId") int userId);
+
+    public List<Field> getAnswerField(@Param("quesId") int quesId);
+
+    public List<Integer> getSubIdByuser(@Param("userId") int userId);
+
+    public HashMap<String , Object> getDoctorIdAndUserIdByUserName(@Param("userName") String userName);
+
+    public HashMap<String , Object> getMessageByUser(@Param("subId") int subId , @Param("senderId") int senderId);
+
+    public String getFieldValue(@Param("fieldId") int fieldId , @Param("subId") int subId);
+
+    public List<String> getUnFieldValue(@Param("unFieldList") List<HashMap<String , Object>> unFields, @Param("subId") int subId);
+
+    public HashMap<String , Object> getPsaValue(@Param("subId") int subId);
+
+    public int updateUserQues(@Param("subId") int subId , @Param("subScore") int subSscore);
+
+    public int insertIntoPSA(@Param("photoUrl") String photoUrl , @Param("selectTime") String selectTime , @Param("subId") int subId , @Param("quesId") int quesId);
+
+    public int insertIntoAnswerOne(@Param("list") List<HashMap<String , Object>> list);
+
+    public int insertIntoAnswerSecond(@Param("list") List<HashMap<String , Object>> list);
+
+    public List<HashMap<String , Object>> findAllSubQuestionnaires(@Param("userId") int userId);
 }

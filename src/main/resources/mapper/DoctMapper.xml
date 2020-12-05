@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cdu.questionnaire.dao.DoctorDao">
+
+    <select id="selectAllQuestionnaires" resultType="com.cdu.questionnaire.pojo.tmpObject.QuestionnaireInfo">
+        SELECT id as subId, DATE_FORMAT(subTime , '%Y-%m-%d %H:%i:%s') AS subTime , quesId, isRead
+        FROM `userques`
+        WHERE userid IN
+              (SELECT id FROM `user` WHERE doctorId = #{doctorId})
+          AND isSub = 1
+        ORDER BY isRead, pubTime DESC;
+    </select>
+
+    <select id="selectQuestionnaireName" resultType="java.lang.String">
+        SELECT `quesName`
+        FROM `question`
+        WHERE id = #{quesId};
+    </select>
+
+    <select id="selectQuestionnaireScore" resultType="java.lang.Integer">
+        SELECT subScore
+        FROM `userques`
+        WHERE id = #{subId};
+    </select>
+
+    <select id="selectQuestionnaireIdBySubId" resultType="java.lang.Integer">
+        SELECT quesId
+        FROM `userques`
+        WHERE id = #{subId};
+    </select>
+
+    <select id="selectQuestion" resultType="com.cdu.questionnaire.pojo.Question">
+        select *
+        from question
+        where id = 1;
+    </select>
+
+    <select id="selectMessage" resultType="java.util.Map">
+        SELECT  DATE_FORMAT(MAX(`sendTime`) , '%Y-%m-%d %H:%i:%s') as sendTime, `isRead`, `subId`
+        FROM `chatlog`
+        WHERE subId IN (SELECT distinct(subId) FROM `chatlog` WHERE doctorId = #{doctorId})
+        GROUP BY subId;
+    </select>
+
+</mapper>

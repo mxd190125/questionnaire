@@ -18,6 +18,4 @@ public class Question {
     private Integer id;
     private String quesName;
     private String quesInfo;
-    private String createTime;
-    private String endTime;
 }

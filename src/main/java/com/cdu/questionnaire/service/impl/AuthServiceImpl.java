@@ -5,6 +5,7 @@ import com.cdu.questionnaire.pojo.User;
 import com.cdu.questionnaire.service.AuthService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 
@@ -31,6 +32,7 @@ public class AuthServiceImpl implements AuthService {
         return user;
     }
 
+    @Transactional
     @Override
     public int deleteUnValidUser(String userName, int isRegister) {
         return authDao.deleteUnValidUser(userName, isRegister);
@@ -53,6 +55,7 @@ public class AuthServiceImpl implements AuthService {
         return authDao.statusOfRegister(userName);
     }
 
+    @Transactional
     @Override
     public void registerUserName(String userName) {
         authDao.registerUserName(userName);

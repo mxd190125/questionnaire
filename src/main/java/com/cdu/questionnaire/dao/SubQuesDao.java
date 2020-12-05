@@ -32,4 +32,11 @@ public interface SubQuesDao {
      * @return 状态码
      */
     Integer writeConQues(@Param("list") List<Map<String, Object>> mapList);
+
+    /**
+     * 传入用户填写问卷内容
+     * @param mapList 内容的数据封装
+     * @return 状态码
+     */
+    Integer writeConQuesUn(@Param("list") List<Map<String, Object>> mapList);
 }

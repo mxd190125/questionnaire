@@ -16,6 +16,7 @@ public class Field {
     private Integer id;
     private String fieldName;
     private String chosse;
+    private String score;
     private Integer quesId;
     private String chosseType;
 }

@@ -20,7 +20,7 @@ import java.util.Map;
  * @Version 1.0
  * @Author 何政梁
  * @Date 2020/9/28 15:21
- * @Description TODO
+ * @Description 用户提交问卷存储答案
  * Modification User:
  * Modification Date:
  */
@@ -47,25 +47,39 @@ public class SubQuesController {
         String userName = jsonObject.getString("userName");
         String userId = subQuesService.queryId(userName);
         //解析json数组
-        String content = jsonObject.getString("content");
-        JSONObject jsonObject1 = new JSONObject(content);
-        JSONArray content1 = jsonObject1.getJSONArray("content");
-        for (int i = 0; i < content1.length(); i++) {
+        JSONArray content = jsonObject.getJSONArray("content");
+        for (int i = 0; i < content.length(); i++) {
             Map<String, Object> map = new HashMap<>();
-            JSONObject jsonObject2 = content1.getJSONObject(i);
-            Integer id = (Integer) jsonObject2.get("id");
+            JSONObject jsonObject2 = content.getJSONObject(i);
+            String id =  jsonObject2.getString("id");
             String value = jsonObject2.getString("value");
             map.put("id", id);
             map.put("value", value);
             map.put("userId", userId);
             mapList.add(map);
         }
+
+        //保存问卷题目答案以及用户id的集合
+        List<Map<String, Object>> mapUnList = new ArrayList<>();
+        //复合选项题提交方法
+        JSONArray unfed = jsonObject.getJSONArray("reunite");
+        for (int i=0;i<unfed.length();i++){
+            Map<String, Object> unMap = new HashMap<>();
+            JSONObject jsonObject4 = unfed.getJSONObject(i);
+            unMap.put("userId",userId);
+            unMap.put("unFieldId",jsonObject4.getString("unFieldId"));
+            unMap.put("unFieldValue",jsonObject4.getString("value"));
+            mapUnList.add(unMap);
+        }
+        System.out.println(mapList);
+        System.out.println(mapUnList);
         if (quesId != null && userId != null) {
             //提交问卷状态
             Integer checkIsSub = subQuesService.checkIsSub(userId, quesId);
             //写入内容
             Integer writeConQues = subQuesService.writeConQues(mapList);
-            if (checkIsSub == 0 || writeConQues == 0) {
+            Integer writeConQuesUn = subQuesService.writeConQuesUn(mapUnList);
+            if (checkIsSub == 0 || writeConQues == 0 || writeConQuesUn == 0) {
                 return "{\"status\" : \"0\"}";
             } else {
                 return "{\"status\" : \"1\"}";
@@ -73,6 +87,7 @@ public class SubQuesController {
         } else {
             return "{\"status\" : \"0\"}";
         }
+
     }
 
 }

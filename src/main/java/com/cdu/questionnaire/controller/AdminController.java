@@ -1,7 +1,9 @@
 package com.cdu.questionnaire.controller;
 
 
+import com.cdu.questionnaire.pojo.User;
 import com.cdu.questionnaire.service.AdminService;
+import com.cdu.questionnaire.service.SubQuesService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
@@ -39,6 +41,9 @@ public class AdminController {
 
     @Resource
     private AdminService adminService;
+    
+    @Resource
+    private SubQuesService subQuesService;
 
     /**
      *查询待审核用户信息
@@ -70,13 +75,19 @@ public class AdminController {
             Integer auditStatus = adminService.agreeAuditUser(userName);
             //查询未填写的问卷
             List<Map<String,Object>> list = adminService.queryQuesTime(userName);
-            //关联未填写问卷
-           Integer integer = adminService.writeQuesById(list);
+            Integer integer =0;
+            if (list.isEmpty()){
+                return  "{\"status\":\"1\"}";
+            }else if (!(list.isEmpty())){
+                //关联未填写问卷
+                integer = adminService.writeQuesById(list);
+            }
+
             if (auditStatus != 0 && integer != 0){
-                    return  "{\"status\":\"1\"}";
-                }else {
-                  return  "{\"status\":\"0\"}";
-                }
+                return  "{\"status\":\"1\"}";
+            }else {
+                return  "{\"status\":\"0\"}";
+            }
         }else {
             return  "{\"status\":\"0\"}";
         }
@@ -103,7 +114,7 @@ public class AdminController {
     }
 
     /**
-     * * 显示所有的用户
+     * 显示所有的用户
      * @return 返回一个所有正式用户的List集合数据
      * @throws JsonProcessingException 抛出错误
      */
@@ -136,14 +147,14 @@ public class AdminController {
 
     /**
      *  点击指定用户，返回该用户填写的所有问卷名字集合
-     * @param pageNumber 页数
      * @param userName 用户id
      * @return 该用户的所有问卷集合
      * @throws JsonProcessingException 抛出错误
      */
     @GetMapping(value = "/admin/home/userQues")
-    public String queryQuesByUser(Integer pageNumber,String userName) throws JsonProcessingException {
-        List<String> quesList = adminService.queryQuesByUser((pageNumber-1)*PAGE_SIZE,userName);
+    public String queryQuesByUser(String userName) throws JsonProcessingException {
+        String uId = subQuesService.queryId(userName);
+        List<Map<String,String>> quesList = adminService.queryQuesByUser(uId);
         String result = objectMapper.writeValueAsString(quesList);
         if (quesList != null){
             return  "{\"status\":\"1\""+ ",\"quesList\":" + result + "}";
@@ -151,6 +162,34 @@ public class AdminController {
             return  "{\"status\":\"0\""+ ",\"quesList\":" + null + "}";
         }
     }
+
+    /**
+     * 返回所有医生列表
+     *
+     * @return 医生集合
+     */
+    @GetMapping("/adminowAllDoctors")
+    public String showAllDoctors() throws JsonProcessingException {
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("{\"status\":1");
+        List<User> doctorList = adminService.queryDoctors();
+        stringBuilder.append(",\"doctorList\":").append(objectMapper.writeValueAsString(doctorList));
+        stringBuilder.append("}");
+        return stringBuilder.toString();
+    }
+
+    /**
+     * 绑定用户的医生
+     *
+     * @param userId   用户id
+     * @param doctorId 医生id
+     * @return 绑定清空 1表示成功 0表示失败
+     */
+    @GetMapping("/admin/bindDoctor")
+    public String bindDoctor(String userId, String doctorId) {
+        return "{\"status\":" + adminService.writeUserDoctor(userId, doctorId) +"}";
+    }
+
 
 
 }

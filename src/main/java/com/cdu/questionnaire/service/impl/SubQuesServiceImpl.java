@@ -39,4 +39,9 @@ public class SubQuesServiceImpl implements SubQuesService {
     public Integer writeConQues(List<Map<String, Object>> mapList) {
         return subQuesDao.writeConQues(mapList);
     }
+
+    @Override
+    public Integer writeConQuesUn(List<Map<String, Object>> mapList) {
+        return subQuesDao.writeConQuesUn(mapList);
+    }
 }

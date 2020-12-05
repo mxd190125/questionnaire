@@ -50,4 +50,17 @@
         </foreach>
     </insert>
 
+    <update id="updateUserDoctor">
+        UPDATE `user`
+        SET doctorId=#{doctorId}
+        WHERE id = #{userId};
+    </update>
+
+    <select id="selectDoctors" resultType="com.cdu.questionnaire.pojo.User">
+       SELECT id , userName ,  DATE_FORMAT(registerTime , '%Y-%m-%d %H:%i:%s') as registerTime , isRegister , doctorId
+       FROM `user`
+       WHERE id IN (SELECT userId FROM userrole WHERE roleId = 3);
+    </select>
+
+
 </mapper>

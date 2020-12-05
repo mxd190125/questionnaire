@@ -1,8 +1,11 @@
 package com.cdu.questionnaire.service.impl;
 
 import com.cdu.questionnaire.dao.AdminDao;
+import com.cdu.questionnaire.pojo.User;
 import com.cdu.questionnaire.service.AdminService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -53,8 +56,8 @@ public class AdminServiceImpl implements AdminService {
     }
 
     @Override
-    public List<String> queryQuesByUser(Integer pageNumber,String userName) {
-        return adminDao.queryQuesByUser(pageNumber,userName);
+    public List<Map<String,String>> queryQuesByUser(String userName) {
+        return adminDao.queryQuesByUser(userName);
     }
 
     @Override
@@ -71,5 +74,28 @@ public class AdminServiceImpl implements AdminService {
     public Integer writeQuesById(List<Map<String,Object>> list) {
         return adminDao.writeQuesById(list);
     }
+
+    /**
+     * 绑定用户医生
+     *
+     * @param userId
+     * @param doctorId
+     * @return 影响行数
+     */
+    @Override
+    @Transactional(readOnly = false, propagation = Propagation.REQUIRES_NEW)
+    public int writeUserDoctor(String userId, String doctorId) {
+        return adminDao.updateUserDoctor(userId,doctorId);
+    }
+
+    @Override
+    public List<User> queryDoctors() {
+        List<User> doctors = adminDao.selectDoctors();
+        for (User doctor : doctors) {
+            doctor.setRole("doctor");
+        }
+        return doctors;
+    }
+
 
 }

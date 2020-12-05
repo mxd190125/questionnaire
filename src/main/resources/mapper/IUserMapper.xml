@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.cdu.questionnaire.dao.UserDao">
+
+      <select id="findUnSubQuestionNaires" resultType="com.cdu.questionnaire.pojo.Question">
+               SELECT q.id AS id , q.quesName AS quesName , q.quesInfo AS quesInfo , q.createTime AS createTime , q.endTime AS endTime
+                         FROM `user` u INNER JOIN userques uq ON u.id=uq.userId
+                                       INNER JOIN question q ON uq.quesId=q.id
+                         WHERE u.userName=#{userName , jdbcType=VARCHAR} AND uq.isSub=0;
+      </select>
+
+<!--      <select id="findSubQuestionNaires" resultType="com.cdu.questionnaire.pojo.UserSubmit">-->
+<!--                SELECT uq.id AS id , q.quesName AS quesName , uq.userId AS userId , q.id AS quesId , q.quesInfo AS quesInfo , uq.isSub AS isSub , uq.subTime AS subTime-->
+<!--                          FROM `user` u INNER JOIN userques uq ON u.id=uq.userId-->
+<!--                                        INNER JOIN question q ON uq.quesId=q.id-->
+<!--                          WHERE u.userName=#{userName , jdbcType=VARCHAR} AND uq.isSub=1;-->
+<!--       </select>-->
+
+       <select id="getQuestionNaireFields" resultType="com.cdu.questionnaire.pojo.Field">
+               SELECT * FROM field WHERE quesId=#{quesId , jdbcType=INTEGER};
+       </select>
+
+       <select id="getQuestionNaire" resultType="com.cdu.questionnaire.pojo.Question">
+               SELECT * FROM question WHERE id=#{quesId , jdbcType=INTEGER};
+       </select>
+
+       <select id="getFieldValues" resultType="com.cdu.questionnaire.pojo.FieldValue">
+                SELECT f.id AS id , f.fieldName AS fieldName , f.quesId AS quesId , f.chosse AS chosse , f.chosseType AS chosseType , fv.chosseValue AS chosseValue  FROM field f INNER JOIN fieldvalue fv ON f.id=fv.fieldId
+                                    INNER JOIN userques ur ON fv.userId=ur.userId
+                                    WHERE ur.userId=(SELECT id FROM user WHERE userName=#{userName , jdbcType=VARCHAR})
+                                    AND ur.quesId=#{quesId , jdbcType=INTEGER} AND f.quesId=#{quesId , jdbcType=INTEGER} AND ur.isSub=1
+       </select>
+
+        <select id="getSubmitTime" resultType="java.lang.String">
+               SELECT subTime FROM record
+                              WHERE userId=(SELECT id FROM user WHERE userName=#{userName , jdbcType=VARCHAR})
+                              AND quesId=#{quesId , jdbcType=INTEGER};
+        </select>
+
+
+        <select id="getUnFields" resultType="com.cdu.questionnaire.pojo.UnField">
+               SELECT unF.* FROM unfield unF INNER JOIN field F ON unF.fieldId=F.id WHERE F.id=#{fieldId , jdbcType=INTEGER};
+        </select>
+
+        <select id="getUnSubAnswerInfo" resultType="java.util.HashMap">
+            SELECT uq.id as subId , DATE_FORMAT(uq.pubTime , '%Y-%m-%d %H:%i:%s') AS pubTime , DATE_FORMAT(uq.endTime , '%Y-%m-%d %H:%i:%s') AS endTime ,
+                   q.id as quesId , q.quesName as quesName , q.quesInfo as quesInfo
+            FROM userques  uq INNER JOIN question q ON uq.quesId = q.id
+            WHERE uq.userId=#{userId , jdbcType=INTEGER} AND uq.quesId=1 AND isSub=0 AND uq.endTime>NOW();
+        </select>
+
+        <select id="getUnSubPSAInfo" resultType="java.util.HashMap">
+            SELECT uq.id as subId , DATE_FORMAT(uq.pubTime , '%Y-%m-%d %H:%i:%s') AS pubTime , DATE_FORMAT(uq.subTime , '%Y-%m-%d %H:%i:%s') AS subTime ,
+            q.id as quesId , q.quesName as quesName , q.quesInfo as quesInfo
+            FROM userques uq INNER JOIN question q ON uq.quesId = q.id
+            WHERE uq.userId=#{userId , jdbcType=INTEGER} AND uq.quesId=2 ANd isSub=0 AND endTime>NOW();
+        </select>
+
+        <select id="getAnswerField" resultType="com.cdu.questionnaire.pojo.Field">
+            SELECT * FROM field WHERE quesId=#{quesId , jdbcType=INTEGER};
+        </select>
+
+        <select id="getSubIdByuser" resultType="java.lang.Integer">
+            SELECT id FROM userques WHERE isSub=1 AND userId=#{userId , jdbcType=INTEGER}
+        </select>
+
+        <select id="getDoctorIdAndUserIdByUserName" resultType="java.util.HashMap">
+            SELECT id , doctorId FROM `user` WHERE userName=#{userName , jdbcType=VARCHAR};
+        </select>
+
+        <select id="getMessageByUser" resultType="java.util.HashMap">
+           SELECT cl.id AS id , q.id AS quesId , q.quesName AS quesName ,
+                  DATE_FORMAT(uq.subTime , '%Y-%m-%d %H:%i:%s') AS subTime ,
+                  DATE_FORMAT(cl.sendTime , '%Y-%m-%d %H:%i:%s') AS sendTime ,
+                  uq.id AS subId , cl.isRead AS isRead , uq.subScore AS subScore
+           FROM userques uq INNER JOIN chatlog cl ON uq.id=cl.subId
+           INNER JOIN question q ON q.id=uq.quesId WHERE cl.subId =#{subId , jdbcType=INTEGER} AND senderId=#{senderId , jdbcType=INTEGER}
+           ORDER BY cl.sendTime DESC LIMIT 1;
+        </select>
+
+        <select id="getFieldValue" resultType="java.lang.String">
+            SELECT chosseValue AS value FROM fieldvalue WHERE fieldId=#{fieldId , jdbcType=INTEGER} AND subId=#{subId , jdbcType=INTEGER};
+        </select>
+
+        <select id="getUnFieldValue" parameterType="java.util.List" resultType="java.lang.String">
+           SELECT unFieldvalue AS value  FROM unfieldvalue WHERE unFieldId IN
+           <foreach collection="unFieldList" index="index" item="item" open="(" separator="," close=")">
+                #{item.unFieldId , jdbcType=INTEGER}
+           </foreach>
+           AND subId=#{subId , jdbcType=INTEGER}
+        </select>
+
+        <select id="getPsaValue" resultType="java.util.HashMap">
+           SELECT photoUrl , DATE_FORMAT(selectTime , '%Y-%m-%d %H:%i:%s') AS selectTime FROM psavalue WHERE subId=#{subId , jdbcType=INTEGER};
+        </select>
+
+        <update id="updateUserQues">
+           UPDATE userques SET isSub = 1 , subTime =NOW() , subScore=#{subScore , jdbcType=INTEGER}  WHERE id=#{subId , jdbcType=INTEGER};
+        </update>
+
+        <insert id="insertIntoPSA">
+           INSERT INTO psavalue (photoUrl , selectTime , subId , quesId)
+           VALUES(#{photoUrl , jdbcType=VARCHAR} , #{selectTime , jdbcType=VARCHAR} , #{subId , jdbcType=INTEGER} , #{quesId , jdbcType=INTEGER});
+        </insert>
+
+        <insert id="insertIntoAnswerOne" parameterType="java.util.List">
+           INSERT INTO fieldvalue (fieldId , chosseValue , subId) VALUES
+           <foreach collection="list" item="item" index="index" separator=",">
+               (
+                 #{item.fieldId  ,jdbcType=INTEGER},
+                 #{item.chosseValue  ,jdbcType=VARCHAR},
+                 #{item.subId  ,jdbcType=INTEGER}
+               )
+           </foreach>
+        </insert>
+
+        <insert id="insertIntoAnswerSecond" parameterType="java.util.List">
+           INSERT INTO unfieldvalue (unFieldId , unFieldValue , subId) VALUES
+           <foreach collection="list" item="item" index="index" separator=",">
+                (
+                  #{item.unFieldId , jdbcType=INTEGER},
+                  #{item.chosseValue , jdbcType=VARCHAR},
+                  #{item.subId , jdbcType=INTEGER}
+                )
+           </foreach>
+        </insert>
+
+        <select id="findAllSubQuestionnaires" resultType="java.util.HashMap">
+            SELECT uq.id AS subId , q.id AS quesId , q.quesName AS quesName , DATE_FORMAT(uq.subTime , '%Y-%m-%d %H:%i:%s') AS subTime , uq.subScore AS subScore
+            FROM userques uq INNER JOIN question q ON uq.quesId=q.id
+            WHERE uq.isSub=1 AND uq.userId=#{userId , jdbcType=INTEGER};
+        </select>
+
+</mapper>

@@ -1,5 +1,6 @@
 package com.cdu.questionnaire.dao;
 
+import com.cdu.questionnaire.pojo.User;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -55,10 +56,9 @@ public interface AdminDao {
     /**
      * 查询改用户提交的所有问卷，按照提交时间逆序
      * @param userName 用户id
-     * @param pageNumber 页数
      * @return List<String>，一个包含该用户的提交问卷的List封装
      */
-    List<String> queryQuesByUser(@Param("pageNumber") Integer pageNumber, @Param("userName") String userName);
+    List<Map<String,String>> queryQuesByUser(@Param("userName") String userName);
 
     /**
      *   通过用户注册
@@ -74,5 +74,8 @@ public interface AdminDao {
      */
     Integer refuseAuditUser(@Param("userName") String userName);
 
+    int updateUserDoctor(String userId, String doctorId);
+
+    List<User> selectDoctors();
 
 }
